@@ -1,5 +1,4 @@
 import React from "react";
-import Autoplay from "embla-carousel-autoplay"
 import CompanyCarousel from "@/components/company-carousel";
 import Link from "next/link";
 import faqs from "@/data/faqs.json"
@@ -18,8 +17,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
-import Image from "next/image";
 
 
 const features = [

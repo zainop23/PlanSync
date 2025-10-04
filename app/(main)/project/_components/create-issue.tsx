@@ -77,9 +77,10 @@ export default function IssueCreationDrawer({
     if (isOpen && orgId) {
       fetchUsers(orgId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, orgId]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: { title: string; assigneeId?: string; description?: string; priority: string }) => {
     await createIssueFn(projectId, {
       ...data,
       status,
@@ -136,7 +137,7 @@ export default function IssueCreationDrawer({
                     <SelectValue placeholder="Select assignee" />
                   </SelectTrigger>
                   <SelectContent>
-                    {users?.map((user: any) => (
+                    {users?.map((user: { id: string; name: string }) => (
                       <SelectItem key={user.id} value={user.id}>
                         {user?.name}
                       </SelectItem>

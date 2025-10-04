@@ -4,8 +4,11 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getProjects } from "@/actions/organization";
 import DeleteProject from "./delete-project";
 
+type ProjectListProps = {
+  orgId: string;
+};
 
-export default async function ProjectList({orgId}:any){
+export default async function ProjectList({ orgId }: ProjectListProps) {
     const projects = await getProjects(orgId);
     if(projects.length === 0){
         return (

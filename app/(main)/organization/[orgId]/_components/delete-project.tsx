@@ -9,7 +9,11 @@ import { useRouter } from "next/navigation";
 import useFetch from "@/hooks/use-fetch";
 import { toast } from "sonner";
 
-export default function DeleteProject({ projectId }:any) {
+type DeleteProjectProps = {
+  projectId: string;
+};
+
+export default function DeleteProject({ projectId }: DeleteProjectProps) {
   const { membership } = useOrganization();
   const router = useRouter();
 

@@ -16,13 +16,6 @@ import IssueCreationDrawer from "./create-issue";
 import IssueCard from "@/components/issue-card";
 import BoardFilters from "./board-filters";
 
-type Issue = {
-  id: string;
-  status: string;
-  order: number;
-  [key: string]: any;
-};
-
 type Sprint = {
   id: string;
   status: string;
@@ -31,7 +24,7 @@ type Sprint = {
   endDate: Date;
 };
 
-function reorder(list: any[], startIndex: number, endIndex: number) {
+function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
@@ -63,7 +56,7 @@ export default function SprintBoard({ sprints, projectId, orgId }: SprintBoardPr
 
   const [filteredIssues, setFilteredIssues] = useState(issues);
 
-  const handleFilterChange = (newFilteredIssues: any) => {
+  const handleFilterChange = (newFilteredIssues: unknown) => {
     setFilteredIssues(newFilteredIssues);
   };
 
@@ -89,7 +82,7 @@ export default function SprintBoard({ sprints, projectId, orgId }: SprintBoardPr
     error: updateIssuesError,
   } = useFetch(updateIssueOrder);
 
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = async (result: { destination?: { droppableId: string; index: number } | null; source: { droppableId: string; index: number } }) => {
     if (currentSprint.status === "PLANNED") {
       toast.warning("Start the sprint to update board");
       return;
@@ -152,7 +145,7 @@ export default function SprintBoard({ sprints, projectId, orgId }: SprintBoardPr
       });
     }
 
-    const sortedIssues = newOrderedData.sort((a: any, b: any) => a.order - b.order);
+    const sortedIssues = newOrderedData.sort((a: { order: number }, b: { order: number }) => a.order - b.order);
     setIssues(sortedIssues);
 
     updateIssueOrderFn(sortedIssues);
@@ -182,7 +175,7 @@ export default function SprintBoard({ sprints, projectId, orgId }: SprintBoardPr
 
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 bg-slate-900 p-4 rounded-lg">
-          {statuses.map((column: any) => (
+          {statuses.map((column: { key: string; name: string }) => (
             <Droppable key={column.key} droppableId={column.key}>
               {(provided) => (
                 <div
@@ -194,11 +187,11 @@ export default function SprintBoard({ sprints, projectId, orgId }: SprintBoardPr
                     {column.name}
                   </h3>
                   {filteredIssues
-                    ?.filter((issue: any) => issue.status === column.key)
-                    .map((issue: any, index: number) => (
+                    ?.filter((issue: { status: string }) => issue.status === column.key)
+                    .map((issue: unknown, index: number) => (
                       <Draggable
-                        key={issue.id}
-                        draggableId={issue.id}
+                        key={(issue as { id: string }).id}
+                        draggableId={(issue as { id: string }).id}
                         index={index}
                         isDragDisabled={updateIssuesLoading}
                       >
@@ -209,12 +202,12 @@ export default function SprintBoard({ sprints, projectId, orgId }: SprintBoardPr
                             {...provided.dragHandleProps}
                           >
                             <IssueCard
-                              issue={issue}
+                              issue={issue as never}
                               onDelete={() => fetchIssues(currentSprint.id)}
-                              onUpdate={(updated: any) =>
-                                setIssues((issues: any) =>
-                                  issues.map((issue: any) => {
-                                    if (issue.id === updated.id) return updated;
+                              onUpdate={(updated: unknown) =>
+                                setIssues((issues: unknown) =>
+                                  (issues as { id: string }[]).map((issue: { id: string }) => {
+                                    if (issue.id === (updated as { id: string }).id) return updated;
                                     return issue;
                                   })
                                 )

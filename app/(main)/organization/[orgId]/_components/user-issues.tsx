@@ -46,14 +46,14 @@ export default async function UserIssues({ userId }: UserIssuesProps) {
 }
 
 type IssueGridProps = {
-  issues: any[];
+  issues: unknown[];
 };
 
 function IssueGrid({ issues }: IssueGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {issues.map((issue: any) => (
-        <IssueCard key={issue.id} issue={issue} showStatus />
+      {(issues as Array<{ id: string } & Record<string, unknown>>).map((issue) => (
+        <IssueCard key={issue.id} issue={issue as never} showStatus />
       ))}
     </div>
   );
