@@ -187,5 +187,3 @@ This project is licensed under the MIT License.
 - [Neon](https://neon.tech/)
 
 ---
-
-**Built with ❤️ for agile teams everywhere**
