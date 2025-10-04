@@ -1,6 +1,6 @@
 # 🚀 PlanSync
 
-[PlanSync](plan-sync-sand.vercel.app)
+[PlanSync](https://plan-sync-sand.vercel.app)
 
 **A modern, full-stack project management and issue tracking platform built with Next.js 15, designed for agile teams to collaborate seamlessly.**
 
