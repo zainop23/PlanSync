@@ -31,7 +31,12 @@ type IssueCardProps = {
     description?: string | null;
     projectId: string;
     sprintId: string;
-    assignee?: any;
+    assigneeId?: string | null;
+    assignee?: {
+      id: string;
+      name: string;
+      imageUrl?: string;
+    } | null;
     reporter: {
       clerkUserId: string;
       name: string;
@@ -39,8 +44,8 @@ type IssueCardProps = {
     };
   };
   showStatus?: boolean;
-  onDelete?: (...args: any[]) => void;
-  onUpdate?: (...args: any[]) => void;
+  onDelete?: () => void;
+  onUpdate?: (issue: unknown) => void;
 };
 
 export default function IssueCard({
@@ -52,14 +57,14 @@ export default function IssueCard({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const router = useRouter();
 
-  const onDeleteHandler = (...params: any[]) => {
+  const onDeleteHandler = () => {
     router.refresh();
-    onDelete(...params);
+    onDelete();
   };
 
-  const onUpdateHandler = (...params: any[]) => {
+  const onUpdateHandler = (updatedIssue: unknown) => {
     router.refresh();
-    onUpdate(...params);
+    onUpdate(updatedIssue);
   };
 
   const created = formatDistanceToNow(new Date(issue.createdAt), {

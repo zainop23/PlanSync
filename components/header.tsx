@@ -1,4 +1,4 @@
-import { SignInButton, SignedOut, SignedIn, UserButton } from "@clerk/nextjs"
+import { SignInButton, SignedOut, SignedIn } from "@clerk/nextjs"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "./ui/button"

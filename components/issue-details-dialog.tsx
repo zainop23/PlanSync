@@ -34,21 +34,26 @@ type IssueDetailsDialogProps = {
   issue: {
     id: string;
     title: string;
+    description?: string | null;
     status: string;
     priority: string;
-    description?: string | null;
+    assigneeId?: string | null;
     projectId: string;
     sprintId: string;
-    assignee?: any;
+    assignee?: {
+      id: string;
+      name: string;
+      imageUrl?: string;
+    } | null;
     reporter: {
       clerkUserId: string;
       name: string;
       imageUrl?: string;
     };
   };
-  onDelete?: () => void;
-  onUpdate?: (issue: any) => void;
-  borderCol?: string;
+  onDelete: () => void;
+  onUpdate: (data: unknown) => void;
+  borderCol: string;
 };
 
 export default function IssueDetailsDialog({
