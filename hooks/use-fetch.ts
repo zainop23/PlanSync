@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "sonner";
 
 const useFetch = (cb: (...args: any[]) => Promise<any>) => {
   const [data, setData] = useState<any>(null);
@@ -16,7 +15,7 @@ const useFetch = (cb: (...args: any[]) => Promise<any>) => {
       setError(null);
     } catch (error: any) {
       setError(error);
-      toast.error(error?.message || "An error occurred");
+      // Error is stored in state - components can handle display if needed
     } finally {
       setLoading(false);
     }

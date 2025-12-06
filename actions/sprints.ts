@@ -3,7 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
-export async function createSprint(projectId : string, data: any) {
+export async function createSprint(projectId: string, data: { name?: string; startDate: Date; endDate: Date }) {
   const { userId, orgId } = await auth();
 
   if (!userId || !orgId) {
@@ -19,9 +19,13 @@ export async function createSprint(projectId : string, data: any) {
     throw new Error("Project not found");
   }
 
+  // Use custom name if provided, otherwise auto-generate
+  const sprintCount = project.sprints.length;
+  const sprintName = data.name?.trim() || `${project.key}-Sprint-${sprintCount + 1}`;
+
   const sprint = await db.sprint.create({
     data: {
-      name: data.name,
+      name: sprintName,
       startDate: data.startDate,
       endDate: data.endDate,
       status: "PLANNED",
@@ -79,4 +83,32 @@ export async function updateSprintStatus(sprintId: any, newStatus:any) {
   } catch (error:any) {
     throw new Error(error.message);
   }
+}
+
+export async function updateSprintName(sprintId: string, newName: string) {
+  const { userId, orgId } = await auth();
+
+  if (!userId || !orgId) {
+    throw new Error("Unauthorized");
+  }
+
+  const sprint = await db.sprint.findUnique({
+    where: { id: sprintId },
+    include: { project: true },
+  });
+
+  if (!sprint) {
+    throw new Error("Sprint not found");
+  }
+
+  if (sprint.project.organizationId !== orgId) {
+    throw new Error("Unauthorized");
+  }
+
+  const updatedSprint = await db.sprint.update({
+    where: { id: sprintId },
+    data: { name: newName.trim() },
+  });
+
+  return { success: true, sprint: updatedSprint };
 }

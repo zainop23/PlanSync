@@ -11,14 +11,12 @@ import {
 } from "@/components/ui/popover";
 import { Card, CardContent } from "@/components/ui/card";
 
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { CalendarIcon } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { format, addDays } from "date-fns";
 
-import { sprintSchema } from "@/app/lib/validators";
 import useFetch from "@/hooks/use-fetch";
 import { createSprint } from "@/actions/sprints";
 import { toast } from "sonner";
@@ -41,44 +39,35 @@ export default function SprintCreationForm({
     from: new Date(),
     to: addDays(new Date(), 14),
   });
+  const [sprintName, setSprintName] = useState(`${projectKey}-Sprint-${sprintKey}`);
   const router = useRouter();
 
   const { loading: createSprintLoading, fn: createSprintFn } =
     useFetch(createSprint);
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(sprintSchema),
+  const { control, handleSubmit } = useForm({
     defaultValues: {
-      name: `${projectKey}-${sprintKey}`,
       startDate: dateRange.from,
       endDate: dateRange.to,
     },
   });
 
-  const onSubmit = async (data: { name: string; startDate: Date; endDate: Date }) => {
-    console.log("Submitting sprint with data:", {
-      projectId,
-      name: data.name,
-      startDate: dateRange.from,
-      endDate: dateRange.to,
-    });
+  const onSubmit = async () => {
+    if (!sprintName.trim()) {
+      toast.error("Sprint name is required");
+      return;
+    }
     
     await createSprintFn(projectId, {
-      ...data,
+      name: sprintName,
       startDate: dateRange.from,
       endDate: dateRange.to,
     });
     
-    console.log("Sprint creation completed");
-    
     setShowForm(false);
+    setSprintName(`${projectKey}-Sprint-${sprintKey + 1}`);
     toast.success("Sprint created successfully!");
-    router.refresh(); // Refresh the page to show updated data
+    router.refresh();
   };
 
   return (
@@ -103,23 +92,15 @@ export default function SprintCreationForm({
               className="flex gap-4 items-end"
             >
               <div className="flex-1">
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium mb-1"
-                >
+                <label className="block text-sm font-medium mb-1">
                   Sprint Name
                 </label>
                 <Input
-                  id="name"
-                  {...register("name")}
-                  readOnly
+                  value={sprintName}
+                  onChange={(e) => setSprintName(e.target.value)}
+                  placeholder="Enter sprint name"
                   className="bg-slate-950"
                 />
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.name.message}
-                  </p>
-                )}
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium mb-1">
